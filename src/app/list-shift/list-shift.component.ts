@@ -58,7 +58,6 @@ export class ListShiftComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.dataToParentTable.subscribe(
         (data) => {
           let indexEdited = this.dataSource.data.findIndex((item) => item.id === data.id);
-          console.log(indexEdited);
           if (indexEdited !== -1) {
             let dataSource = this.dataSource.data;
             dataSource[indexEdited] = this.prepareDate(data);
