@@ -4,6 +4,7 @@ import { ShiftDialogComponent } from "../shift-dialog/shift-dialog.component";
 import { MatTableDataSource } from "@angular/material/table";
 import { DbService } from "../services/db.service";
 import { Subscription } from "rxjs";
+import { ShiftListModel } from "../models/shift-list-model";
 
 @Component({
   selector: 'app-list-shift',
@@ -70,14 +71,13 @@ export class ListShiftComponent implements OnInit, OnDestroy {
   }
 
   public addShift() {
-
     let dialogRef = this._dialog.open(ShiftDialogComponent, {
       maxHeight: '95vh',
     });
     dialogRef.componentInstance.dataToParentTable.subscribe(
     (data) => {
       let dataSourceCtrl = this.dataSource.data;
-      dataSourceCtrl.push(this.prepareDate(data));
+      dataSourceCtrl.push(ShiftListModel.prepareDate(data));
       this.dataSource.data = dataSourceCtrl;
     },
     (error) => {},
@@ -93,8 +93,6 @@ export class ListShiftComponent implements OnInit, OnDestroy {
       submerged: data.total.submerged,
       unloaded: data.total.unload,
       typeCrane: data.typeCrane,
-      delete: '',
-      edit: '',
       id: data.id
     }
   }

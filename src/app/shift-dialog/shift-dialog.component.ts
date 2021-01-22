@@ -3,6 +3,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { MatTableDataSource } from "@angular/material/table";
 import { DbService } from "../services/db.service";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DataForDialog } from "../interfaces/data-for-dialog";
 
 @Component({
   selector: 'app-shift-dialog',
@@ -25,7 +26,7 @@ export class ShiftDialogComponent implements OnInit {
   constructor(
       public fb: FormBuilder,
       public dialogRef: MatDialogRef<ShiftDialogComponent>,
-      @Inject(MAT_DIALOG_DATA) public elementId: any,
+      @Inject(MAT_DIALOG_DATA) public elementId: number,
       private _dbService: DbService,
       private _matDialog: MatDialog
   ) {}
@@ -38,17 +39,14 @@ export class ShiftDialogComponent implements OnInit {
             this.total = response.total;
             this.setDataToEdit(this.dataToEdit);
             this.setControlToCrane();
-            let dataSourceCraneOne = [];
             this.dataToEdit.craneOne.forEach(() => {
-              dataSourceCraneOne.push({car: '', submerged: '', unloaded: ''});
+              this.dataSourceOneCrane.data.push({car: '', submerged: '', unloaded: ''});
             });
-            this.dataSourceOneCrane.data = dataSourceCraneOne;
 
-            let dataSourceCraneTwo = [];
             this.dataToEdit.craneTwo.forEach(() => {
-              dataSourceCraneTwo.push({car: '', submerged: '', unloaded: ''});
+              this.dataSourceDoubleCrane.data.push({car: '', submerged: '', unloaded: ''});
             });
-            this.dataSourceDoubleCrane.data = dataSourceCraneTwo;
+            this.setCarArrayGroup();
           },
           (error) => {},
           () => {}
@@ -93,6 +91,9 @@ export class ShiftDialogComponent implements OnInit {
   }
 
   public saveForm(formCrane: FormGroup) {
+    if (!this.formCrane.valid) {
+      return;
+    }
     let data: any = formCrane;
     data.craneOne = data.craneOne.filter((item) => item.car);
     data.craneTwo = data.craneTwo.filter((item) => item.car);
@@ -229,7 +230,7 @@ export class ShiftDialogComponent implements OnInit {
     );
   }
 
-  private setDataToEdit(data: any) {
+  private setDataToEdit(data: DataForDialog) {
     this.formCrane = this.fb.group({
       typeCrane: new FormControl({value: data.typeCrane, disabled: true}, Validators.required),
       fullName: new FormControl(data.fullName, Validators.required),
@@ -242,7 +243,7 @@ export class ShiftDialogComponent implements OnInit {
     });
     const carCtrlOne = this.formCrane.get('craneOne') as FormArray;
     const carCtrlTwo = this.formCrane.get('craneTwo') as FormArray;
-    data.craneOne.forEach((item, index) => {
+    data.craneOne.forEach((item) => {
       carCtrlOne.push(new FormGroup({
         car: new FormControl(item.car),
         submerged: item.submerged ? new FormControl(item.submerged) : new FormControl({value: null, disabled: true}),
