@@ -27,7 +27,7 @@ export class ListShiftComponent implements OnInit, OnDestroy {
         (response) => {
           let dataSource = [];
           response.forEach((item) => {
-            dataSource.push(this.prepareDate(item));
+            dataSource.push(ShiftListModel.prepareDate(item));
           });
           this.dataSource.data = dataSource;
         },
@@ -61,7 +61,7 @@ export class ListShiftComponent implements OnInit, OnDestroy {
           let indexEdited = this.dataSource.data.findIndex((item) => item.id === data.id);
           if (indexEdited !== -1) {
             let dataSource = this.dataSource.data;
-            dataSource[indexEdited] = this.prepareDate(data);
+            dataSource[indexEdited] = ShiftListModel.prepareDate(data);
             this.dataSource.data = dataSource;
           }
         },
@@ -85,15 +85,4 @@ export class ListShiftComponent implements OnInit, OnDestroy {
     );
   }
 
-  public prepareDate(data) {
-    return  {
-      fullName: data.fullName,
-      dateStart: data.date.dateStart,
-      dateEnd: data.date.dateEnd,
-      submerged: data.total.submerged,
-      unloaded: data.total.unload,
-      typeCrane: data.typeCrane,
-      id: data.id
-    }
-  }
 }
